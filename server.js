@@ -5,7 +5,7 @@ import { createHash, timingSafeEqual } from "node:crypto";
 import { CHARS } from "./public/palette.js";
 import { roomMetas, getRoom, roomState, peekState, DB_DIR } from "./lib/db.js";
 import { Payload, json, dynamicJson } from "./lib/http.js";
-import { faviconSvg, iconPng, ogPng } from "./lib/images.js";
+import { faviconSvg, iconPng, ogPng, decodePng } from "./lib/images.js";
 import { renderPage, notFoundPage, sitemapXml, CSP, SITE } from "./lib/render.js";
 
 const PORT = Number(process.env.PORT) || 3000;
@@ -21,6 +21,7 @@ const hash = (buf) => createHash("sha1").update(buf).digest("base64url").slice(0
 const assets = new Map(); // name -> { payload, version }
 const urls = { js: "", css: "", font: "", logo: "", favicon: "/favicon.svg", faviconType: "image/svg+xml" };
 let faviconIco = null;
+let logoImage = null; // decoded public/logo.png, used on the social preview image
 
 function register(name, body, type, extra = {}) {
   const payload = new Payload(body, type, { cache: "no-cache", brQuality: 11, minCompress: 256, ...extra });
@@ -50,7 +51,12 @@ async function buildAssets() {
 
   // Your own branding: public/logo.png (header logo) and public/favicon.ico. Both optional.
   const logoFile = join(PUBLIC, "logo.png");
-  if (existsSync(logoFile)) urls.logo = register("logo.png", readFileSync(logoFile), "image/png");
+  if (existsSync(logoFile)) {
+    const bytes = readFileSync(logoFile);
+    urls.logo = register("logo.png", bytes, "image/png");
+    logoImage = decodePng(bytes);
+    if (!logoImage) console.warn("[permaplace] logo.png could not be decoded for the preview image (interlaced?) - using the built-in logo there.");
+  }
   const icoFile = join(PUBLIC, "favicon.ico");
   if (existsSync(icoFile)) {
     faviconIco = new Payload(readFileSync(icoFile), "image/x-icon", { cache: "public, max-age=86400" });
@@ -284,7 +290,7 @@ function og(req, room) {
   if (!hit || Date.now() - hit.at > 600_000) {
     const meta = getRoom(room);
     const viewable = meta && roomAccess(meta).view === "open";
-    const png = ogPng(viewable ? roomState(room) : { chunks: new Map() }, meta?.size || 1000);
+    const png = ogPng(viewable ? roomState(room) : { chunks: new Map() }, meta?.size || 1000, logoImage);
     hit = { at: Date.now(), payload: new Payload(png, "image/png", { cache: "public, max-age=600", etag: false }) };
     ogCache.set(room, hit);
   }
