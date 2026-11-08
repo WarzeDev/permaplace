@@ -2,7 +2,7 @@
 :root {
   color-scheme: light dark;
   --bg: light-dark(#f4f4f5, #0a0a0a);
-  --panel: light-dark(rgb(255 255 255 / 0.86), rgb(18 18 18 / 0.84));
+  --panel: light-dark(rgb(255 255 255 / 0.92), rgb(18 18 18 / 0.91));
   --solid: light-dark(#ffffff, #141414);
   --fg: light-dark(#171717, #ededed);
   --muted: light-dark(#5f5f66, #a1a1aa);
@@ -53,8 +53,6 @@ a { color: var(--accent); text-underline-offset: 3px; }
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
   border-radius: 14px;
-  -webkit-backdrop-filter: blur(14px) saturate(1.4);
-  backdrop-filter: blur(14px) saturate(1.4);
 }
 
 /* ---------- buttons */
@@ -143,8 +141,6 @@ img.logo { background: none; object-fit: contain; image-rendering: pixelated; }
   padding: 2px 11px;
   font-size: 13px;
   font-variant-numeric: tabular-nums;
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
   white-space: nowrap;
 }
 #hud-state[data-kind="error"] { color: var(--danger); }
@@ -180,6 +176,7 @@ img.logo { background: none; object-fit: contain; image-rendering: pixelated; }
 @media (max-width: 720px) {
   .dock { grid-template-areas: "tool . act" "pal pal pal"; grid-template-columns: auto 1fr auto; row-gap: 6px; }
   .dock:has(#btn-place[hidden]) { grid-template-areas: "tool tool tool" "pal pal pal"; }
+  .brand-name { display: none; }
   .palette {
     display: grid;
     grid-template-rows: repeat(2, 38px);
@@ -193,8 +190,8 @@ img.logo { background: none; object-fit: contain; image-rendering: pixelated; }
   }
   .sw { width: 34px; height: 34px; }
   .lbl { display: none; }
-  .room-chip { max-width: 22vw; }
-  .zoom { top: auto; bottom: 190px; transform: none; }
+  .room-chip { max-width: 30vw; }
+  .zoom { top: auto; bottom: 210px; transform: none; }
 }
 
 /* ---------- toasts, loading bar */
@@ -224,7 +221,7 @@ dialog {
   z-index: 50;
 }
 dialog:not([open]) { display: none; }
-dialog::backdrop { background: rgb(0 0 0 / 0.5); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+dialog::backdrop { background: rgb(0 0 0 / 0.5); }
 .seen #dlg-about:not(:modal) { display: none; }
 .dlg-body { padding: 22px 22px 8px; overflow-y: auto; overscroll-behavior: contain; }
 .dlg-body h1 { margin: 0 0 6px; font-size: 24px; line-height: 1.2; letter-spacing: -0.03em; }
