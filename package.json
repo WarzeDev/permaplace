@@ -1,0 +1,13 @@
+{
+  "name": "permaplace",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "bun run server.js",
+    "dev": "bun --watch run server.js"
+  },
+  "dependencies": {
+    "geist": "^1.3.1"
+  }
+}
